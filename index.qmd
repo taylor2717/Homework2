@@ -1,0 +1,153 @@
+---
+title: "Programming in Base R"
+format: html
+editor: visual
+---
+
+## Task 1: Basic Vector practice
+
+## Question 1
+
+```{r}
+# vector for pre measurements
+pre <- c(120, 151, 125, 126, 115, 132, 132, 129, 134, 139, 127, 122, 127, 135, 133, 128, 147, 138, 140, 132)
+pre
+```
+
+```{r}
+# vector for post measurements
+post <- c(127, 145, 135, 122, 115, 122, 123, 126, 126, 129, 132, 146, 120, 114, 121, 120, 128, 120, 133, 115)
+post
+```
+
+## Question 2
+
+```{r}
+# Create subject names
+subject_names <- paste("Subject", 1:20, sep = "_")
+
+# Assign names to each vector 
+names(pre) <- subject_names
+names(post) <- subject_names
+```
+
+## Question 3
+
+```{r}
+# calculate change in blood pressure by subtracting post measurements from pre measurements
+bp_change <- pre - post
+bp_change
+```
+
+## Question 4
+
+```{r}
+# Average decrease in measurements across all patients
+mean(bp_change)
+```
+
+## Question 5
+
+```{r}
+# determine which patients experienced decrease in blood pressure after treatment
+which(bp_change>0)
+```
+
+## Question 6
+
+```{r}
+# Subset to only positive changes
+bp_pos <- bp_change[bp_change>0]
+bp_pos
+```
+
+## Question 7
+
+```{r}
+# Average decrease among only those who decreased
+mean(bp_pos)
+```
+
+## Task 2: Basic Data Frame practice
+
+## Question 1
+
+```{r}
+# Data frame with patient, pre_bp, post_bp, diff_bp
+bp_df <- data.frame(
+  patient = subject_names,
+  pre_bp  = pre,
+  post_bp = post,
+  diff_bp = bp_change,
+  stringsAsFactors = FALSE
+)
+```
+
+## Question 2
+
+```{r}
+# Rows where diff_bp is negative (blood pressure increased after treatment)
+bp_neg <- bp_df[bp_df$diff_bp < 0, ]   
+```
+
+## Question 3
+
+```{r}
+# New TRUE/FALSE column: post_bp < 120
+bp_df$post_below_120 <- bp_df$post_bp < 120
+```
+
+## Question 4
+
+```{r}
+# Print nicely
+knitr::kable(bp_df)
+```
+
+## Task 3: List practice
+
+## Question 1
+
+```{r}
+# Placebo data
+pre_pl  <- c(138,135,147,117,152,134,114,121,131,130)
+post_pl <- c(105,136,123,130,134,143,135,139,120,124)
+```
+
+```{r}
+# Build placebo data frame in the same structure as bp_df
+placebo_df <- data.frame(
+  patient        = paste("Placebo", 1:10, sep = "_"),
+  pre_bp         = pre_pl,
+  post_bp        = post_pl,
+  diff_bp        = pre_pl - post_pl,              # positive means decrease
+  stringsAsFactors = FALSE
+)
+placebo_df$post_below_120 <- placebo_df$post_bp < 120
+```
+
+## Question 2
+
+```{r}
+# Store both in a list
+bp_list <- list(
+  treatment = bp_df,
+  placebo   = placebo_df
+)
+```
+
+## Question 3
+
+```{r}
+# Access the first list element (three ways)
+bp_list[[1]]          # by position, returns the data frame
+bp_list[["treatment"]]# by name, returns the data frame
+bp_list["treatment"]  # by name, returns a sub-list
+```
+
+## Question 4
+
+```{r}
+# In one line, access the pre_bp column of the placebo data frame
+bp_list$placebo$pre_bp
+```
